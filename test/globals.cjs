@@ -1,6 +1,6 @@
 let bsLocal;
 
-const startLocalTesting = (done, {key}) => {
+const startLocalTesting = (done, { key }) => {
   let Browserstack;
   try {
     Browserstack = require('browserstack-local');
@@ -13,19 +13,20 @@ const startLocalTesting = (done, {key}) => {
   console.log('Setting up browserstack local testing...');
   bsLocal = new Browserstack.Local();
 
-  bsLocal.start({key}, () => {
+  bsLocal.start({ key }, () => {
     console.log('BrowserStackLocal running:', bsLocal.isRunning());
     done();
   });
-}
+};
 
 const stopLocalTesting = (done) => bsLocal.stop(() => done());
 
 module.exports = {
+  reuseBrowserSession: true,
   before(done) {
     if (this.settings.desiredCapabilities['browserstack.local']) {
       const key = this.settings.desiredCapabilities['bstack:options'].accessKey;
-      startLocalTesting(done, {key});
+      startLocalTesting(done, { key });
     } else {
       done();
     }
@@ -38,4 +39,4 @@ module.exports = {
       done();
     }
   }
-}
+};

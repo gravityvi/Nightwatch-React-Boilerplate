@@ -3,32 +3,17 @@ import Form from '../../../src/components/Form.jsx';
 
 export default {
   title: 'Form Component',
-  component: Form,
-
-  // executed before all the individual component stories; runs in Node context
-  async setup(browser) {
-    console.log('global setup hook', browser.capabilities);
-  },
-
-  // executed after all the individual component stories; runs in Node context
-  async teardown(browser) {
-    console.log('global teardown hook');
-  },
-
-  // executed before each individual component story; runs in Node context
-  async preRender(browser, context) {
-    // context is made of {id, name, title}
-    console.log('preRender', context.id);
-  },
-
-  // executed after each individual component story; runs in Node context
-  async preRender(browser, context) {
-    // context is made of {id, name, title}
-    console.log('preRender', context.id);
-  }
+  component: Form
 };
 
-export const AnotherForm = Object.assign(
+export const EmptyForm = Object.assign(() => <Form />, {
+  test: async (browser, { component }) => {
+    await expect(component).to.be.visible;
+    await expect(component.find('button')).to.not.be.enabled;
+  }
+});
+
+export const FilledForm = Object.assign(
   () => (
     <Form
       addTask={function (value) {
@@ -38,8 +23,6 @@ export const AnotherForm = Object.assign(
   ),
   {
     async play({ canvasElement, args }) {
-      console.log('play function', args);
-
       const root = within(canvasElement);
       const input = root.getByTestId('new-todo-input');
 
@@ -55,12 +38,12 @@ export const AnotherForm = Object.assign(
     },
 
     test: async (browser, { component, result }) => {
-      console.log('Result from play', result);
       await expect(component).to.be.visible;
 
       await expect(component.find('input'))
         .to.have.property('value')
         .equal('another one bites the dust');
+      await expect(component.find('button')).to.be.enabled;
     }
   }
 );
